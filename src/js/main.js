@@ -1,82 +1,84 @@
-// document.querySelector("html").className = "js-enabled";
-// window.addEventListener("keypress", son);
-//
-// function son(event) {
-//     const audio = document.querySelector(`audio[data-key="${event.key}"]`);
-//     const key = document.querySelector(`.key[data-key="${event.key}"]`);
-//
-//     if(!audio) return;
-//
-//     audio.currentTime = 0;
-//     audio.play();
-//     key.classList.add('playing');
-//     document.body.style.backgroundColor = `rgb(${Math.random()*256},${Math.random()*256},${Math.random()*256})`;
-//
-// }
-//
-// const keys = document.querySelectorAll('.key');
-//
-// keys.forEach(key => key.addEventListener('transitionend', removeTransition));
-//
-// function removeTransition(event) {
-//     if(event.propertyName !== 'transform') return;
-//     this.classList.remove('playing');
-//     document.body.style.backgroundColor = 'white';
-//
-// }
+//Exercice de Base
+(function () {
+    const DrumKit = {
+        init(){
+            document.documentElement.classList.toggle('js-enabled');
+            this.key = document.querySelectorAll(".key");
+            this.audio = document.querySelectorAll("audio");
 
+            for(let element of this.key){
+                element.addEventListener('click', this.play);
+                element.addEventListener('transitionend', this.transitionEvent);
+            }
+            window.addEventListener('keypress', this.play);
+        },
+        play(event){
+            const select  = event.type === 'click' ? event.currentTarget.dataset.key : event.key;
 
+            this.key = document.querySelector(`.key[data-key="${select}"]`);
+            this.audio = document.querySelector(`audio[data-key="${select}"]`);
+
+            if(this.audio) {
+                this.audio.currentTime = 0;
+                this.audio.play();
+                this.key.classList.add('playing');
+                document.body.className = select;
+            }
+        },
+        transitionEvent(event){
+            document.body.className = "";
+            event.currentTarget.classList.remove("playing");
+        }
+    };
+    DrumKit.init();
+})();
+// Exercice avec Bonus
+/*
 (function () {
     const drumKit = {
         init(){
-            document.querySelector("html").className = "js-enabled";
-            window.addEventListener("keypress", this.sonClavier);
-            this.keys = document.querySelectorAll('.key');
-            for(this.element of this.keys){
-                this.element.addEventListener("click", this.sonSouris);
+            document.body.classList.toggle('js-enabled');
+            this.key = document.querySelectorAll(".key");
+            this.audio = document.querySelectorAll("audio");
+            this.audios = new Map();
+            this.keys = new Map();
+
+            for(let element of this.key){
+                this.keys.set(element.dataset.key, element);
+                element.addEventListener('click', ()=>{
+                    this.play(element, this.audios, this.keys);
+                });
+                element.addEventListener('transitionend', this.transitionEvent);
             }
-            this.keys.forEach(key => key.addEventListener('transitionend', this.removeTransition));
-
+            for(let element of this.audio){
+                this.audios.set(element.dataset.key, element);
+            }
+            window.addEventListener('keypress', ()=>{
+                this.play(this, this.audios, this.keys);
+            });
         },
-        sonClavier(event){
-            console.log(event);
-            this.audio = document.querySelector(`audio[data-key="${event.key}"]`);
-            this.key = document.querySelector(`.key[data-key="${event.key}"]`);
+        play(event, audios, keys){
+            console.log(event.dataset.key);
+            console.log(keys.get(event.dataset.key));
 
-            if(!this.audio) return;
+            if(event.type == 'click'){
+                this.key = keys.get(event.dataset.key);
+                this.audio = audios.get(event.dataset.key);
+            }else{
+                this.key = document.querySelector(`.key[data-key="${event.key}"]`);
+                this.audio = document.querySelector(`audio[data-key="${event.key}"]`);
+            }
+            console.log(this.key);
 
-            this.audio.currentTime = 0;
             this.audio.play();
+            this.key.currentTime = 0;
             this.key.classList.add('playing');
-            document.body.style.backgroundColor = `rgb(${Math.random()*256},${Math.random()*256},${Math.random()*256})`;
-
+            document.body.classList.add(this.key.dataset.key);
         },
-        sonSouris(event){
-            this.audio = document.querySelector(`audio[data-key="${event.currentTarget.dataset.key}"]`);
-            this.key = document.querySelector(`.key[data-key="${event.currentTarget.dataset.key}"]`);
-
-            if(!this.audio) return;
-
-            this.audio.currentTime = 0;
-            this.audio.play();
-            this.key.classList.add('playing');
-            document.body.style.backgroundColor = `rgb(${Math.random()*256},${Math.random()*256},${Math.random()*256})`;
-        },
-        removeTransition(event){
-            if(event.propertyName !== 'transform') return;
-            this.classList.remove('playing');
-            document.body.style.backgroundColor = 'white';
+        transitionEvent(event){
+            document.body.classList.remove(event.currentTarget.dataset.key);
+            event.currentTarget.classList.remove("playing");
         }
-    };
+    }
     drumKit.init();
-})();
-
-
-
-
-
-
-
-
-
-
+})()*/
